@@ -1,6 +1,6 @@
 import {
   IAction,
-} from '../helpers';
+} from 'src/_helpers';
 export interface ICounterState {
   counter: number;
   error: string;
@@ -15,6 +15,8 @@ const reducer = (state: ICounterState, action: IAction<number | Error>) => {
   const { counter } = state;
   const { type, payload } = action;
   switch (type) {
+    case 'RESET_COUNTER':
+      return initateState;
     case 'INCREMENT':
       return {counter: counter + 1};
     case 'INCREMENT_IF_ODD':

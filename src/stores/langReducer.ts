@@ -1,6 +1,6 @@
 import {
   IAction,
-} from '../helpers';
+} from 'src/_helpers';
 
 export interface ILangState {
   lang: string;

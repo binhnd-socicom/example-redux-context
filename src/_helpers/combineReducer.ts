@@ -10,16 +10,16 @@ export default function combineReducers<S>(reducers: object) {
 
   return function combination(state: S, action: any) {
     let hasChanged = false;
-    const nextState = state;
+    const nextState = {};
     for (const key of finalReducerKeys) {
       if (typeof finalReducers[key] === 'function') {
         const reducer = finalReducers[key];
         const previousStateForKey = state[key]
         const nextStateForKey = reducer(previousStateForKey, action)
-        nextState[key] = nextStateForKey
+        nextState[key] = nextStateForKey !== previousStateForKey ? Object.assign({}, previousStateForKey, nextStateForKey) : previousStateForKey;
         hasChanged = hasChanged || nextStateForKey !== previousStateForKey
       }
     }
-    return hasChanged ? nextState : state
+    return hasChanged ? Object.assign({}, state, nextState) : state;
   }
 }

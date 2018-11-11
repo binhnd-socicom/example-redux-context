@@ -3,8 +3,9 @@
 import * as React from 'react';
 import './App.css';
 
-import * as CounterActions from '../actions/counter-actions';
-import Store, { IState } from '../stores/config-store';
+import { Dispatch } from 'src/_helpers/createProvider';
+import * as CounterActions from 'src/actions/counter-actions';
+import Store, { IState } from 'src/stores/config-store';
 
 interface IOwnProps {
   label: string;
@@ -19,25 +20,33 @@ interface IProps {
 interface IDispProps {
   addCounter: () => void;
   subCounter: () => void;
+  resetCounter: () => void;
   subAsync: (promise: Promise<number>) => void;
   changeLanguage: (lang: string) => void;
 }
 
 class App extends React.Component<IOwnProps & IProps & IDispProps> {
   public render() {
-    const { label, counter, lang, error, addCounter, subAsync, subCounter, changeLanguage } = this.props;
+    const { label, counter, lang, error, addCounter, resetCounter, subAsync, subCounter, changeLanguage } = this.props;
     return (
       <div className="App">
-        <p>{`Own props: ${label}`}</p>
-        <div>{`Counter: ${counter}`}</div>
-        <div>{`Language: ${lang}`}</div>
-        <div>{`Error: ${error}`}</div>
-        <button onClick={addCounter}>Add</button>
-        <button onClick={subCounter}>Sub</button>
-        <button onClick={() => subAsync(this.subPromise(10, 1000))}>Sub Async</button>
-        <button onClick={() => subAsync(this.subPromise(10, 1000, 'error occur'))}>Sub Error</button>
-        <button onClick={() => changeLanguage('JA')}>Change Lang to Ja</button>
-        <button onClick={() => changeLanguage('EN')}>Change Lang to EN</button>
+        <>
+          <p>{`Own props: ${label}`}</p>
+          <div>{`Counter: ${counter}`}</div>
+          <div>{`Language: ${lang}`}</div>
+          <div>{`Error: ${error}`}</div>
+        </>
+        <div>
+          <button onClick={addCounter}>Add</button>
+          <button onClick={subCounter}>Sub</button>
+          <button onClick={resetCounter}>Reset</button>
+          <button onClick={() => subAsync(this.subPromise(10, 1000))}>Sub Async</button>
+          <button onClick={() => subAsync(this.subPromise(10, 1000, 'error occur'))}>Sub Error</button>
+        </div>
+        <div>
+          <button onClick={() => changeLanguage('JA')}>Change Lang to Ja</button>
+          <button onClick={() => changeLanguage('EN')}>Change Lang to EN</button>
+        </div>
       </div>
     );
   }
@@ -47,13 +56,20 @@ class App extends React.Component<IOwnProps & IProps & IDispProps> {
   });
 }
 
-export default Store.connect<IProps, IDispProps>((state: IState) => ({
+const mapStateToProps = (state: IState) => ({
   counter: state.counterState.counter,
   error: state.counterState.error,
   lang: state.langState.lang,
-}), (dispatch) => ({
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   addCounter: () => dispatch(CounterActions.addCounter),
   changeLanguage: (lang: string) => dispatch({type: 'CHANGE_LANGUAGE', payload: lang}),
+  resetCounter: () => dispatch(CounterActions.resetCounter),
   subAsync: (promise: Promise<number>) => dispatch(CounterActions.subCounterAsync(promise)),
   subCounter: () => dispatch(CounterActions.subCounter),
-}))(App);
+});
+
+const { connect } = Store;
+
+export default connect<IProps, IDispProps>(mapStateToProps, mapDispatchToProps)(App);
