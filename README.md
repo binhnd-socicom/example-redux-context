@@ -9,7 +9,8 @@ yarn start
 
 ### How it works
 
-1. Provider
+#### 1. Provider
+
 Using Context.Provider (equivalent to react-redux provider) to provide global state
 
 ```
@@ -34,7 +35,8 @@ ReactDOM.render(
 registerServiceWorker();
 ```
 
-2. Actions and Reducers
+#### 2. Actions and Reducers
+
 No need to modify anythings. Just replace redux's combineReducers by a new one. It's actually a basic version of redux's implementation.
 
 ```
@@ -66,7 +68,8 @@ export default function combineReducers<S>(reducers: object) {
 
 ```
 
-3. connect(mapStateToProps, mapDispatchToProps)(Component)
+#### 3. connect(mapStateToProps, mapDispatchToProps)(Component)
+
 Connect Context.Consumer to Component. Replacing `connect` to a new version created along with Provider in step1 above will be fine.
 ```
 function connect<MapProps, MapDispatch>(mapStateToProps?: (state: S) => MapProps, mapDispatchToProps?: (dispatch: Dispatch) => MapDispatch){
