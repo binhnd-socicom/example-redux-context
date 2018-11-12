@@ -6,6 +6,7 @@ import './App.css';
 import { Dispatch } from 'src/_helpers/createProvider';
 import * as CounterActions from 'src/actions/counter-actions';
 import Store, { IState } from 'src/stores/config-store';
+import RefButton from './Button';
 
 interface IOwnProps {
   label: string;
@@ -26,6 +27,14 @@ interface IDispProps {
 }
 
 class App extends React.Component<IOwnProps & IProps & IDispProps> {
+  private refButton: any;
+
+  public onRef = (ref: any) => {
+    this.refButton = ref;
+  }
+  public onReset = () => {
+    this.refButton.reset();
+  }
   public render() {
     const { label, counter, lang, error, addCounter, resetCounter, subAsync, subCounter, changeLanguage } = this.props;
     return (
@@ -46,6 +55,9 @@ class App extends React.Component<IOwnProps & IProps & IDispProps> {
         <div>
           <button onClick={() => changeLanguage('JA')}>Change Lang to Ja</button>
           <button onClick={() => changeLanguage('EN')}>Change Lang to EN</button>
+        </div>
+        <div>
+          <RefButton ref={this.onRef} onClick={this.onReset}>Forward Ref</RefButton>
         </div>
       </div>
     );

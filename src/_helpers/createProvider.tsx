@@ -1,3 +1,4 @@
+// tslint:disable:max-classes-per-file
 import * as React from 'react';
 
 import {
@@ -50,21 +51,29 @@ export default function createProvider<S>(initateState: S, reducer: (state: S, a
     }
   }
 
-  function connect<MapProps, MapDispatch>(mapStateToProps?: (state: S) => MapProps, mapDispatchToProps?: (dispatch: Dispatch) => MapDispatch){
-    return (Component: typeof React.Component) => (props: any) => {
+  function connect<MapProps, MapDispatch>(mapStateToProps?: (state: S) => MapProps, mapDispatchToProps?: (dispatch: Dispatch) => MapDispatch) {
+    return (Component: typeof React.Component) => React.forwardRef((props: any, ref) => {
+      class WrapperComponent extends React.Component<any, any> {
+        public render() {
+          const {forwardedRef, ...rest} = this.props;
+          // Assign the custom prop "forwardedRef" as a ref
+          return <Component ref={forwardedRef} {...rest} />;
+        }
+      }
       return (
         <CustomContext.Consumer>
           {state => {
             const mappedProps = Object.assign({}, props, mapStateToProps ? mapStateToProps(state.value) : {}, mapDispatchToProps ? mapDispatchToProps(state.dispatch) : {});
             return (
-              <Component
+              <WrapperComponent
+                forwardedRef={ref}
                 {...mappedProps}
               />
-            );
+            )
           }}
         </CustomContext.Consumer>
       );
-    }
+    })
   }
 
   return {
